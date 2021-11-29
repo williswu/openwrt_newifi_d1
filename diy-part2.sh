@@ -6,53 +6,20 @@
 # Lisence: MIT
 # Author: P3TERX
 # Blog: https://p3terx.com
-# sed '1,3s/my/your/g'
-# sed -i '93s/0xf60000/0x1fb0000/g' target/
-#=================================================
+#============================================================
+
 # Modify default IP
-# sed -i 's/15744/32448/g'
-sed -i 's/192.168.1.1/192.168.31.1/g' package/base-files/files/bin/config_generate
+sed -i 's/192.168.1.1/192.168.1.253/g' package/base-files/files/bin/config_generate
 
-# Modify default PASSWORD
-# sed -i 's/$1$V4UetPzk$CYXluq4wUazHjmCDBCqXF./$1$BtNu28UV$VAZEz4CDe1k7Dvar7Ftji0/g' ./package/lean/default-settings/files/zzz-default-settings
+# Modify Default Theme
+sed -i '/uci commit luci/i\uci set luci.main.mediaurlbase=/luci-static/argon' package/lean/default-settings/files/zzz-default-settings
 
-# Modify hostname
-# sed -i 's/OpenWrt/NEWIFI/g' package/base-files/files/bin/config_generate
+# 修改主机名字，把OpenWrt-123修改你喜欢的就行（不能纯数字或者使用中文）
+#sed -i '/uci commit system/i\uci set system.@system[0].hostname='LEUNG'' package/lean/default-settings/files/zzz-default-settings
 
-# 取消bootstrap为默认主题
-sed -i '/set luci.main.mediaurlbase=\/luci-static\/bootstrap/d' feeds/luci/themes/luci-theme-bootstrap/root/etc/uci-defaults/30_luci-theme-bootstrap
+# 设置密码为空（安装固件时无需密码登陆，然后自己修改想要的密码）
+#sed -i 's@.*CYXluq4wUazHjmCDBCqXF*@#&@g' package/lean/default-settings/files/zzz-default-settings
 
-# 删除原主题包
-# rm -rf package/lean/luci-theme-argon
-# rm -rf openwrt/package/lean/luci-theme-netgear
-
-# 添加新的主题包
-git clone https://github.com/jerrykuku/luci-theme-argon.git package/lean/luci-theme-argon
-# git clone https://github.com/sypopo/luci-theme-atmaterial.git package/lean/luci-theme-atmaterial
-# git clone https://github.com/sypopo/luci-theme-argon-mc.git package/lean/luci-theme-argon-mc
-# git clone https://github.com/Leo-Jo-My/luci-theme-opentomcat.git package/lean/luci-theme-opentomcat
-# git clone https://github.com/fndsz/luci-theme-argon.git package/lean/luci-theme-argon
-# 更新
-# ./scripts/feeds update -a && ./scripts/feeds install -a
-
-##########
-# Modify the version number
-sed -i "s/OpenWrt /Fndsz build $(TZ=UTC-8 date "+%Y.%m.%d") @ OpenWrt /g" package/lean/default-settings/files/zzz-default-settings
-
-# Modify default theme
-sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
-
-# Add kernel build user
-[ -z $(grep "CONFIG_KERNEL_BUILD_USER=" .config) ] &&
-    echo 'CONFIG_KERNEL_BUILD_USER="Fndsz"' >>.config ||
-    sed -i 's@\(CONFIG_KERNEL_BUILD_USER=\).*@\1$"Fndsz"@' .config
-
-# Add kernel build domain
-[ -z $(grep "CONFIG_KERNEL_BUILD_DOMAIN=" .config) ] &&
-    echo 'CONFIG_KERNEL_BUILD_DOMAIN="GitHub Actions"' >>.config ||
-    sed -i 's@\(CONFIG_KERNEL_BUILD_DOMAIN=\).*@\1$"GitHub Actions"@' .config
-
-
-# 删除lean里的百度文本（编译失败），增加百度PCS-web
-# rm -rf package/lean/baidupcs-web
-# git clone https://github.com/liuzhuoling2011/baidupcs-web.git package/lean/baidupcs-web
+# 修改内核版本
+sed -i 's/KERNEL_PATCHVER:=5.10/KERNEL_PATCHVER:=5.4/g' target/linux/x86/Makefile
+#sed -i 's/KERNEL_TESTING_PATCHVER:=5.4/KERNEL_TESTING_PATCHVER:=4.19/g' target/linux/x86/Makefile
